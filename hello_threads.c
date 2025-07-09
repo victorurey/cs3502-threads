@@ -13,7 +13,7 @@ void *thread_func(void *arg) {
     // TODO: Cast arg to long
     long newId = (long)arg;
     // TODO: Print "Hello from thread [ID]"
-    printf("Hello from thread %ld\n", newId);
+    printf("Thread %ld\n", newId);
     return NULL;
 }
 
