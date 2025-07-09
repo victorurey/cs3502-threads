@@ -29,7 +29,8 @@ void *sum_array_portion(void *arg) {
     args->partial_sum = 0;
 
     // TODO: Sum the assigned portion of the array
-    for (int i = args->start_index; i < args->end_index; ++i) {
+    for (int i = args->start_index; i < args->end_index; ++i) 
+    {
         args->partial_sum += data_array[i];
     }
 
@@ -58,9 +59,10 @@ int main(int argc, char *argv[]) {
     // TODO: Allocate memory for data_array
     // Remember to check if allocation was successful
     data_array = malloc(sizeof(int) * ARRAY_SIZE);
-    if (data_array == NULL) {
-        perror("Failed to allocate data_array");
-        exit(EXIT_FAILURE);
+    if (data_array == NULL) // Memory error 
+    {
+        perror("Memory allocation error");
+        exit(1);
     }
 
     // TODO: Initialize the array with random values
@@ -79,9 +81,9 @@ int main(int argc, char *argv[]) {
     pthread_t *threads = malloc(sizeof(pthread_t) * num_threads);
     thread_args_t *args = malloc(sizeof(thread_args_t) * num_threads);
     if (threads == NULL || args == NULL) {
-        perror("Failed to allocate memory for threads or arguments");
+        perror("Memory allocation for threads error");
         free(data_array);
-        exit(EXIT_FAILURE);
+        exit(1);
     }
 
     // TODO: Calculate chunk size for dividing work among threads
@@ -101,11 +103,11 @@ int main(int argc, char *argv[]) {
 
         int rc = pthread_create(&threads[i], NULL, sum_array_portion, &args[i]);
         if (rc != 0) {
-            fprintf(stderr, "Error: pthread_create failed for thread %d (code %d)\n", i, rc);
+            printf("Error in pthread_create for thread %d", i);
             free(data_array);
             free(threads);
             free(args);
-            exit(EXIT_FAILURE);
+            exit(1);
         }
     }
 
@@ -114,11 +116,11 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < num_threads; ++i) {
         int rc = pthread_join(threads[i], NULL);
         if (rc != 0) {
-            fprintf(stderr, "Error: pthread_join failed for thread %d (code %d)\n", i, rc);
+            printf("Error in pthread_join for thread %d", i);
             free(data_array);
             free(threads);
             free(args);
-            exit(EXIT_FAILURE);
+            exit(1);
         }
 
         // TODO: Combine the partial sums from all threads
