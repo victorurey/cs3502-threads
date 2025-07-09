@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <sched.h>
+
+pthread_mutex_t printLock = PTHREAD_MUTEX_INITIALIZER;
+long currentIndex = 0;
+
 
 /*
  * TODO: Implement the thread function
@@ -13,7 +18,20 @@ void *thread_func(void *arg) {
     // TODO: Cast arg to long
     long newId = (long)arg;
     // TODO: Print "Hello from thread [ID]"
-    printf("Thread %ld\n", newId);
+    // Implementation of mutex function to print threads in order
+    while(1)
+    {
+	pthread_mutex_lock(&printLock);
+	if (newId == currentIndex) // Thread creation matches mutex position
+	{
+		printf("Thread %ld\n", newId);
+		currentIndex++;
+		pthread_mutex_unlock(&printLock);
+		break;
+	}
+	pthread_mutex_unlock(&printLock);
+	sched_yield();
+    }
     return NULL;
 }
 
@@ -62,7 +80,7 @@ int main(int argc, char *argv[]) {
 
     // TODO: Clean up (free allocated memory)
     free(threads);
-            
+    pthread_mutex_destroy(&printLock); 
     printf("All threads completed successfully\n");
     return EXIT_SUCCESS;
 }
