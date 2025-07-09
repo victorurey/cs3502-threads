@@ -13,7 +13,7 @@ void *thread_func(void *arg) {
     // TODO: Cast arg to long
     long newId = (long)arg;
     // TODO: Print "Hello from thread [ID]"
-    printf("Hello from thread " + newId + "\n");
+    printf("Hello from thread %ld\n", newId);
     return NULL;
 }
 
@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     
     // TODO: Allocate memory for thread handles
     // Remember to check if allocation was successful
-    pthread_t *threads = malloc(n * sizeOf(pthread_t));
+    pthread_t *threads = malloc(n * sizeof(pthread_t));
     if (threads == NULL) // Error check
     {
         perror("Memory allocation error");
@@ -41,10 +41,11 @@ int main(int argc, char *argv[]) {
         int rc = pthread_create(&threads[i], NULL, thread_func, (void *)i);
         if (rc != 0) // Error in pthread_create
         {
-            fprintf(stderr, "Error in creation of thread " + i);
+            printf("Error in creation of thread %ld", i);
             free(threads); // Memory leak prevention
             exit(1);
         }
+    }
     // TODO: Wait for all threads to complete using pthread_join
     // - Check the return value of pthread_join
     // - Handle any errors appropriately
@@ -53,7 +54,7 @@ int main(int argc, char *argv[]) {
         int rc = pthread_join(threads[i], NULL);
         if (rc != 0) // Error in pthread_join
         {
-            fprintf(stderr, "Error in thread join " + i);
+            printf("Error in thread join %d", i);
             free(threads);
             exit(1);
         }
